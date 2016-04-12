@@ -14,16 +14,20 @@ class socket_io:
         self.host = host_ip_name
         self.port = port_name
         print(tuple([self.host,self.port]))
-        if True:#try:
+        try:
             self.socket.connect(tuple([self.host,self.port]))#('localhost',9999)
             print('connected to \nport:'+str(self.port)+'\nip:'+str(self.host)+'\n========')
             self.t1 = threading.Thread(target=self.readData)
-            self.t1.start()
+            #self.t1.start()
             print('thread 1 start')
             self.t2 = threading.Thread(target=self.eventloop)
-            self.t2.start()
+            #self.t2.start()
             print('thread 2 start\n')
-        if False: #except:
+            
+            self.t1.start()
+            self.t2.start()
+            print('threads running!')
+        except:
             print('socket error!\nconnection failed to host.\nport: '+str(self.port)+'\nip: '+str(self.host))
             
 
@@ -49,11 +53,18 @@ class socket_io:
 
     def eventloop(self):
         while True:
+            print('\nlooping')
             #self.t1.start()
-            self.send_data(input('t@'))
+            self.send_data(input('\nt@: '))
             #self.t1.join()
-            self.t1.join()##restart thread as wait4recieve as input halts threads
-            self.t1.start()
+
+            ##double check this is actualy right on the threading as its prob easier to do this another way
+            
+            ##thread restarter##
+            ##possible improper use of .join
+            self.t1.join(1)##restart thread as wait4recieve as input halts threads
+            ##self.t1.start()
+            ##END##
     
 s = socket_io('localhost',9999)
 ###end classstuff
@@ -75,8 +86,9 @@ def mainloop_t():
     global root
     while True:
         root.mainloop()
-t3 = threading.Thread(target=mainloop_t)
-t3.start()
+t3 = threading.Thread(target=mainloop_t)##this thread actually does work but has to wait for the eventloop thread (t2) 
+t3.start()                              ##to finish before it is allowed to run and cycle even though it has had code executed first
+
 ##s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 ##s.connect(('localhost',9999))
 ##globaldata = ''
