@@ -1,5 +1,6 @@
 import socket
 import threading
+from tkinter import *
 class socket_io:
     ##client socket object
     socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -55,6 +56,27 @@ class socket_io:
             self.t1.start()
     
 s = socket_io('localhost',9999)
+###end classstuff
+##TKprocs##
+
+def test():
+    s.send_data('testtext')
+    
+##t3 = threading.Thread(target=self.readData)
+##t3.start()
+##end tkprocs
+
+##Tkwidgets##
+root = Tk()
+button1 = Button(root,command = test,text = 'testbutton')
+button1.pack()
+##end Tkwidgets##
+def mainloop_t():
+    global root
+    while True:
+        root.mainloop()
+t3 = threading.Thread(target=mainloop_t)
+t3.start()
 ##s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 ##s.connect(('localhost',9999))
 ##globaldata = ''
