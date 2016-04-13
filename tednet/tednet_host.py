@@ -21,6 +21,9 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
             else:
                 self.request.sendall(str(indata).encode('UTF-8'))
                 print('sent'+str(indata))##dbg
+    def server_shutdown(self):
+        print(' shutting down server!')
+        server.shutdown()
         
     def handledata(self,data):##catch disconnects need to
         print('handling')
@@ -34,14 +37,18 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         else:
             self.senddata(dattemp)
 
-        if dattemp[0] == '@':
+        if dattemp[0] == '@':##command will be in if starting one is @ currently best way but may change
+            
             ##dattemp = dattemp.strip('@')##strips command##n/a because @ needed to define cmds
-            print('command')
+            print('command(s) detected:\n')
             pdat = dattemp.split(' ')##splits on spaces
             print(pdat)
             cmd_iter_flag = False##for skipping other commands on each cycle on the same iteration
             cmd_dat_flag = 0##for flagging data on each iteration no of loops to skip inc current oneso 1 ignore would be 2 as it includes the loop remainder
             for x in pdat:
+                
+                if cmd_dat_flag != 0 and pdat[len(pdat)] == x:##if data present and last seg in array
+                    break##stops execution and crashing if trying to access data from out of bounds
                 
                 cmd_iter_flag = False
                 print(cmd_dat_flag)
@@ -51,18 +58,23 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                     cmd_dat_flag += -1
                 if x == '@test'and not cmd_iter_flag:
                     cmd_iter_flag = True
-                    print('test in string')
+                    print('test string')
                     
                 if x == '@print'and not cmd_iter_flag:##if '@print' in pdat:
                     cmd_iter_flag = True
                     cmd_dat_flag = 2#no of loops to avoid
                     print('printing: '+pdat[pdat.index('@print')+1])##pdat may need to be changed here to fit iteration
                     
+                if x == '@shutdown' and not cmd_iter_flag:##needs work
+                    cmd_iter_flag = True
+                    print('Shutdown command issued:')
+                    self.server_shutdown()
+                    
                 if not cmd_iter_flag and cmd_dat_flag == 0:
                     print('command segment" '+str(x)+' " is invalid!')
                     
                 #cmd_dat_flag = False##is here so cleared at iteration END
-            
+            print('########\n##END##')
         print('handled!')
         
 

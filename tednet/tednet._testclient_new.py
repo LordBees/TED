@@ -53,7 +53,7 @@ class socket_io:
 
     def eventloop(self):
         while True:
-            print('\nlooping')
+            print('\nlooping\n')
             #self.t1.start()
             self.send_data(input('\nt@: '))
             #self.t1.join()
